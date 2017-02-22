@@ -20,9 +20,22 @@ namespace SCOMDecrypt
     {
         static void GetData(dynamic scom)
         {
-            RegistryKey dbKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\System Center\\2010\\Common\\Database", true);
+            RegistryKey dbKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\System Center\\2010\\Common\\Database");
+            if (dbKey == null || dbKey.GetValue("DatabaseServerName") == null || dbKey.GetValue("DatabaseName") == null)
+            {
+                Console.WriteLine("[!] Unable to detect SQL server");
+                return;
+            }
             object dbServerName = dbKey.GetValue("DatabaseServerName");
             object dbName = dbKey.GetValue("DatabaseName");
+
+            RegistryKey mbKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\System Center\\2010\\Common\\MOMBins");
+            if (mbKey == null)
+            {
+                Console.WriteLine("[!] Unable to find key");
+                return;
+            }
+            object value1 = mbKey.GetValue("Value1");
 
             SqlConnection conn = new SqlConnection();
             string connectionString = String.Format("Server={0};Database={1};Trusted_Connection=True;", dbServerName, dbName);

