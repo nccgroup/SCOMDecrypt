@@ -12,7 +12,7 @@ Released under AGPL, see LICENSE for more information
 
 This tool is designed to retrieve and decrypt RunAs credentials stored within Microsoft System Center Operations Manager (SCOM) databases.
 
-For background, please see the NCC Group blog post [here](https://medium.com/keylogged)
+For background, please see the NCC Group blog post [here](https://www.nccgroup.trust/uk/about-us/newsroom-and-events/blogs/2017/february/scomplicated-decrypting-scom-runas-credentials/)
 
 ## Pre-requisites ##
 
