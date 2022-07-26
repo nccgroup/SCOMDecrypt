@@ -89,7 +89,7 @@ function Invoke-SCOMDecrypt
 			else
 			{
 				Write-Host "Username: $user"
-				Write-Host "Password: $truePass "
+				Write-Host "Password: $truePass"
 			}
 			Write-Host " "
 		}
