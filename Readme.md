@@ -1,4 +1,4 @@
-# SCOMDecrypt - SCOM Credential Decryption Tool#
+# SCOMDecrypt - SCOM Credential Decryption Tool #
 
 Released as open source by NCC Group Plc - http://www.nccgroup.trust/
 
