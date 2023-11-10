@@ -3,6 +3,8 @@ Released as open source by NCC Group Plc - http://www.nccgroup.com/
 
 Developed by Richard Warren, richard dot warren at nccgroup dot trust
 
+Edited by Blake Drumm
+
 https://www.github.com/nccgroup/SCOMDecrypt
 
 Released under AGPL see LICENSE for more information
@@ -10,6 +12,10 @@ Released under AGPL see LICENSE for more information
 
 function Invoke-SCOMDecrypt
 {
+	[CmdletBinding()]
+	Param (
+		[switch]$Passthru
+	)
 	# Check if SCOM is installed
 	[string]$installDirectory = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\System Center\2010\Common\Setup").InstallDirectory
 	if (Test-Path $installDirectory)
@@ -81,17 +87,25 @@ function Invoke-SCOMDecrypt
 				}
 			}
 			
-			if ($domain -notlike "")
+			# Create PSObject with credentials
+			$credentialObj = New-Object PSObject -Property @{
+				Username = if ($domain -notlike "") { "$domain\$user" } else { $user }
+				Password = $truePass
+			}
+			
+			if ($Passthru)
 			{
-				Write-Host "Username: $domain\$user"
-				Write-Host "Password: $truePass"
+				# Output the object
+				Write-Output $($credentialObj | Select-Object -Property Username, Password)
 			}
 			else
 			{
-				Write-Host "Username: $user"
-				Write-Host "Password: $truePass"
+				# Output as normal string
+				Write-Host "____________________________________"
+				Write-Host "Username: $($credentialObj.Username)"
+				Write-Host "Password: $($credentialObj.Password)"
+				Write-Host " "
 			}
-			Write-Host " "
 		}
 	}
 }
